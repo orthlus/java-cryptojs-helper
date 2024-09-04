@@ -37,7 +37,7 @@ public class CryptoJSImpl {
 			Cipher cipher = Cipher.getInstance(transformation, provider);
 			cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(keyAndIV[0], algorithm), new IvParameterSpec(keyAndIV[1]));
 
-			byte[] data = Arrays.copyOfRange(decodedData, decodedData.length - 16, decodedData.length);
+			byte[] data = Arrays.copyOfRange(decodedData, 16, decodedData.length);
 			byte[] decrypted = cipher.doFinal(data);
 
 			return new String(decrypted);
