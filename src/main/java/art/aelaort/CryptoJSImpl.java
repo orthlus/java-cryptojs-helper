@@ -15,6 +15,7 @@ public class CryptoJSImpl {
 	private static final String transformation = "AES/CBC/PKCS7Padding";
 	private static final String provider = BouncyCastleProvider.PROVIDER_NAME;
 	private static final String algorithm = "AES";
+	private static final byte[] saltPrefixB = "Salted__".getBytes(UTF_8);
 
 	public static String decrypt(String dataToDecrypt, String password) {
 		Security.addProvider(new BouncyCastleProvider());
@@ -23,8 +24,7 @@ public class CryptoJSImpl {
 			byte[] passwordBytes = password.getBytes(UTF_8);
 			byte[] decodedData = Base64.getDecoder().decode(dataToDecrypt);
 
-			byte[] saltedPrefixBytes = "Salted__".getBytes(UTF_8);
-			if (!Arrays.equals(saltedPrefixBytes, Arrays.copyOfRange(decodedData, 0, 8))) {
+			if (!Arrays.equals(saltPrefixB, Arrays.copyOfRange(decodedData, 0, 8))) {
 				System.out.println("'Salted__' not found");
 				System.exit(1);
 			}
@@ -37,7 +37,8 @@ public class CryptoJSImpl {
 			Cipher cipher = Cipher.getInstance(transformation, provider);
 			cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(keyAndIV[0], algorithm), new IvParameterSpec(keyAndIV[1]));
 
-			byte[] decrypted = cipher.doFinal(Arrays.copyOfRange(decodedData, decodedData.length - 16, decodedData.length));
+			byte[] data = Arrays.copyOfRange(decodedData, decodedData.length - 16, decodedData.length);
+			byte[] decrypted = cipher.doFinal(data);
 
 			return new String(decrypted);
 		} catch (Exception e) {
@@ -65,7 +66,7 @@ public class CryptoJSImpl {
 			byte[] prefixAndSaltAndEncryptedData = new byte[16 + encryptedData.length];
 
 			// Copy prefix (0-th to 7-th bytes)
-			System.arraycopy("Salted__".getBytes(UTF_8), 0, prefixAndSaltAndEncryptedData, 0, 8);
+			System.arraycopy(saltPrefixB, 0, prefixAndSaltAndEncryptedData, 0, 8);
 			// Copy salt (8-th to 15-th bytes)
 			System.arraycopy(salt, 0, prefixAndSaltAndEncryptedData, 8, 8);
 			// Copy encrypted data (16-th byte and onwards)
