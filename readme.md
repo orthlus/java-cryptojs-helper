@@ -2,18 +2,24 @@
 Provided encrypt and decrypt methods for replace next methods of CryptoJS:
 
 ### 1. encrypt
+javascript
 ```javascript
 CryptoJS.AES.encrypt(content, password).toString()
 ```
 =>
+
+java
 ```java
 CryptoJSImpl.encrypt(dataToEncrypt, password);
 ```
 ### 2. decrypt
+javascript
 ```javascript
 CryptoJS.AES.decrypt(content, password).toString(CryptoJS.enc.Utf8)
 ```
 =>
+
+java
 ```java
 CryptoJSImpl.decrypt(dataToDecrypt, password);
 ```
