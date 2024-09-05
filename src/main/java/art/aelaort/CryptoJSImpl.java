@@ -25,8 +25,7 @@ public class CryptoJSImpl {
 			byte[] decodedData = Base64.getDecoder().decode(dataToDecrypt);
 
 			if (!Arrays.equals(saltPrefixB, Arrays.copyOfRange(decodedData, 0, 8))) {
-				System.out.println("'Salted__' not found");
-				System.exit(1);
+				throw new CryptoJSImplDecryptionException("'Salted__' not found");
 			}
 
 			byte[] salt = new byte[8];
